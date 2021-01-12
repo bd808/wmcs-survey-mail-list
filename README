@@ -1,8 +1,8 @@
 Make a list of email addresses suitable for surveying all Toolforge
 maintainers + Cloud VPS project admins.
 
-$ python make-toolforge-email-list.py > emails.txt
-$ python make-cloudvps-email-list.py >> emails.txt
+$ python3 make-toolforge-email-list.py > emails.txt
+$ python3 make-cloudvps-email-list.py >> emails.txt
 $ sort emails.txt | uniq > all-emails-sorted.txt
-$ python make-opt-out-list.py | sort | uniq > opt-out.txt
+$ python3 make-opt-out-list.py | sort | uniq > opt-out.txt
 $ grep -vxF -f opt-out.txt all-emails-sorted.txt > emails.txt
