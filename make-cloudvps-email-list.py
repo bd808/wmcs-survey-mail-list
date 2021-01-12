@@ -107,7 +107,7 @@ searchScope = ldap.SCOPE_SUBTREE
 # Get the developer account name and email for all admins
 ldap_members = {}
 for member in admins:
-    print("member: {}".format(member), file=sys.stderr)
+    # print("member: {}".format(member), file=sys.stderr)
     res = l.search_s(
         baseDN, searchScope, 'uid={}'.format(member), ['cn', 'mail'])
     # Note: there are a small number of very old accounts that are missing
