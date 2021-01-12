@@ -42,8 +42,10 @@ ROLES = collections.OrderedDict([
 
 def session(project='observer'):
     """Get a session for the novaobserver user scoped to the given project."""
-    # TODO: read settings from /etc/novaobserver.yaml once we get it mounted
-    # into the kubernetes pods (<https://gerrit.wikimedia.org/r/#/c/327235>)
+    # NOTE: The novaobserver username and password are not secret in the WMCS
+    # environment. This data is provisioned as /etc/novaobserver.yaml on hosts
+    # inside the Cloud VPS environment and stored in labs/private.git which is
+    # in no way private (also naming is hard and that repo's name is bad).
     auth = v3.Password(
         auth_url='http://cloudcontrol1003.wikimedia.org:5000/v3',
         password='Fs6Dq2RtG8KwmM2Z',
