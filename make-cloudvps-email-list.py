@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # Generate a list of email addresses for all Cloud VPS project admins who have
@@ -8,7 +8,7 @@
 # because it is possible to have a developer account in the LDAP directory
 # that has never been attached to Wikitech at all (via Striker).
 #
-# Copyright (c) 2018 Bryan Davis and contributors
+# Copyright (c) 2021 Bryan Davis and contributors
 #
 # This program is free software: you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the Free
@@ -21,8 +21,6 @@
 #
 # You should have received a copy of the GNU General Public License along
 # with this program.  If not, see <http://www.gnu.org/licenses/>.
-from __future__ import print_function
-
 import collections
 import ldap
 import subprocess
@@ -100,7 +98,7 @@ for project in all_projects():
     admins.extend(users['projectadmin'])
 admins = set(admins)
 
-l = ldap.open('ldap-labs.eqiad.wikimedia.org')
+l = ldap.initialize('ldap://ldap-labs.eqiad.wikimedia.org', bytes_mode=False)
 l.protocol_version = ldap.VERSION3
 
 baseDN = 'dc=wikimedia,dc=org'
@@ -115,7 +113,7 @@ for member in admins:
     # Note: there are a small number of very old accounts that are missing
     # their mail attribute
     if res and 'cn' in res[0][1] and 'mail' in res[0][1]:
-        ldap_members[res[0][1]['cn'][0]] = res[0][1]['mail'][0]
+        ldap_members[res[0][1]['cn'][0].decode("utf-8")] = res[0][1]['mail'][0].decode("utf-8")
 
 # Get the username for all Wikitech accounts that have opt-ed out of email
 # contact by other users.
@@ -131,7 +129,10 @@ WHERE user_id IN (
 sql = subprocess.Popen(
     ['/usr/local/bin/sql', 'labswiki'],
     stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE)
-email_optout = set(sql.communicate(input=query)[0].strip().split('\n')[1:])
+email_optout = set(
+    sql.communicate(
+        input=query.encode("utf-8")
+    )[0].decode("utf-8").strip().split('\n')[1:])
 
 # Remove users who have set their disablemail flag from the set
 for user in email_optout:
